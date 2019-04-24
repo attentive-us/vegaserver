@@ -10,10 +10,10 @@ If using the [docker](https://docs.docker.com/) container:
 
     # Build the image
     cd vegaserver
-    sudo docker build -t uwdata/vegaserver .
+    sudo docker build -t attentive/vegaserver .
 
     # Run, serving on port 80
-    sudo docker run -d -p 80:8888 uwdata/vegaserver
+    sudo docker run -d -p 80:8888 attentive/vegaserver
 
 ## Run
 
