@@ -2,7 +2,7 @@
 // Service to render a Vega specification to PNG/SVG
 
 var express = require('express'),
-vg = require("vega");
+vega = require("vega");
 
 var port = process.argv[2] || 8888,
 app = express(),
@@ -31,35 +31,32 @@ app.use(function(req, res, next) {
 // Set `header` to `true` to include XML header and SVG doctype
 app.post('/', function (req, res, next) {
   var spec = JSON.parse(req.body),
-  header = req.params.header === "true",
-  format = req.params.header || "svg";
+  header = req.query.header === "true",
+  format = req.query.format || "svg";
+  var view = new vega.View(vega.parse(spec), {renderer: 'none'});
 
   if (format === "svg") {
     console.log("Rendering an SVG");
     res.set('Content-Type', 'image/svg+xml');
-
-    vg.headless.render(
-      {spec: spec, renderer:"svg"},
-      function(err, data) {
-        if (err) return next(err);
-        res.send((header ? svgHeader : "") + data.svg);
-      }
-    );
+    view.toSVG()
+      .then(function(svg) {
+        res.send((header ? svgHeader : "") + svg);
+      })
+      .catch(function(err) { console.error(err); });
 
   } else if (format === "png") {
     console.log("Rendering a PNG");
     res.set('Content-Type', 'image/png');
-
-    vg.headless.render(
-      {spec: spec, renderer: "canvas"},
-      function(err, data) {
-        if (err) return next(err);
-        var stream = data.canvas.createPNGStream();
+    view.toCanvas()
+      .then(function(canvas) {
+        // process node-canvas instance
+        // for example, generate a PNG stream to write
+        var stream = canvas.createPNGStream();
         stream
           .on("data", function(chunk) { res.write(chunk); })
           .on("end", function() { res.end(); });
-      }
-    );
+      })
+      .catch(function(err) { console.error(err); });
   } else {
     res.set('Content-Type', 'text');
     res.send("Invalid format " + format);

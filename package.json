@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.11.1",
-    "vega": "~1.4.3"
+    "canvas": "^2.4.1",
+    "express": "4.16.4",
+    "vega": "~5.3.5"
   },
   "scripts": {
     "start": "node server.js"

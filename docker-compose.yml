@@ -1,0 +1,8 @@
+version: "3"
+services:
+  vegaserver:
+    build: .
+    working_dir: /var/vegaserver/
+    command: npm run start 
+    volumes:
+      - .:/var/vegaserver
